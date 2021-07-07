@@ -1,0 +1,19 @@
+{
+	"name": "icreon.com",
+	"version": "1.0.0",
+	"description": "Icreon Website",
+	"main": "index.js",
+	"scripts": {
+		"sass": "sass --watch sass/main.scss:styles/assessment-tool.css"
+	},
+	"author": "Icreon",
+	"license": "ISC",
+	"devDependencies": {
+		"eslint": "^7.23.0",
+		"eslint-config-node": "^4.1.0",
+		"eslint-config-prettier": "^8.1.0",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-prettier": "^3.3.1",
+		"prettier": "^2.2.1"
+	}
+}

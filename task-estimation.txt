@@ -1,0 +1,4 @@
+- Setup + Content population with json = 1 day
+- UI Development = 2 days
+- UI Interaction = 2 days
+- Revisions = 1-2 days
