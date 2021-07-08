@@ -245,7 +245,7 @@ function generateQuestionnaire(json) {
 								</div>
 							</div>
 							<div class="col-12 col-md-6 infographic-wrapper">
-								<div class="categories">${categoriesList}</div>
+								<div class="questionnaire-categories">${categoriesList}</div>
 								${infographicLevel(questionID)}
 							</div>
 						</div>
@@ -734,7 +734,11 @@ function tabsInteraction() {
 
 // animate step
 function animateStep(array, type, nextIndex, lastIndex) {
-	const tl = gsap.timeline({});
+	const tl = gsap.timeline({
+		onStart: () => {
+			$(window).scrollTop(0);
+		}
+	});
 
 	if(nextIndex < array.length) {
 		tl
@@ -764,5 +768,27 @@ function animateStep(array, type, nextIndex, lastIndex) {
 				x: 0,
 				ease: 'power2.out'
 			})
+	}
+}
+
+
+
+// form validation
+formValidation();
+function formValidation() {
+	const form = $('#assessment-form');
+	if(form) {
+		ufValidation('#assessment-form', {
+			onError: () => {
+				console.log('oops, theres an error');
+			},
+			onSuccess: () => {
+				results.Email = form.find('#email').val();
+				results.FirstName = form.find('#first-name').val();
+				results.LastName = form.find('#last-name').val();
+				console.log(results);
+				console.log('call ajax after this');
+			}
+		})
 	}
 }
