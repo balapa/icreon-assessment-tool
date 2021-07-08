@@ -5,7 +5,7 @@ const transition = { x: 50 }
 const selectedCategories = [];
 const selectedCategoriesObject = [];
 let results = {};
-const jsonURL = 'https://api.jsonbin.io/b/60e5661cfe016b59dd5e5ca7';
+const jsonURL = 'https://api.jsonbin.io/b/60e5661cfe016b59dd5e5ca7/1';
 
 // gsap settings
 gsap.defaults({
@@ -15,8 +15,20 @@ gsap.defaults({
 $(document).ready(function () {
 	selectCategories();
 	initialSteps();
-	tabsInteraction();
+	retakeAssessment();
 });
+
+
+// retake assessment
+function retakeAssessment() {
+	const button = $('.retake-assessment');
+	if(button) {
+		button.on('click', function() {
+			console.log('yo');
+			window.location.reload();
+		})
+	}
+}
 
 
 // select categories from infographic
@@ -274,8 +286,6 @@ function levelsInteraction() {
 		const desiredLevel5 = svg.querySelector('#desired-level-5');
 
 		// set elements
-		levelNumbers = [].slice.call(levelNumbers);
-		levelLines = [].slice.call(levelLines);
 		gsap.set(levelMeter, {
 			transformOrigin: 'bottom',
 			scaleY: 0
@@ -448,6 +458,8 @@ function questionnaireSteps() {
 
 // analysis interaction
 function analysisInteraction() {
+	console.log(results);
+
 	const rootSteps = $('.root-step');
 	const infographicBaseWrapper = $('.infographic-base-wrapper');
 	const contentWrapper = $('.analysis-step .content-wrapper');
@@ -462,6 +474,7 @@ function analysisInteraction() {
 	// remove infographic base because there's a bug if when
 	// there's two similar SVG images
 	infographicBaseWrapper.remove();
+	infographicWrapper.html(infographicResults());
 	
 	// generate infographic results
 	animateStep(rootSteps, 'next', 2, 1);
@@ -484,7 +497,7 @@ function analysisInteraction() {
 			category.AverageDesiredLevel = Math.round(averageDesiredLevel/category.QuestionsList.length);
 
 			// make tabs
-			tabsTriggersEl += `<div data-category=${category.Category} class="tab-trigger ${tabClass}">
+			tabsTriggersEl += `<div data-category="${category.Category}" class="tab-trigger ${tabClass}">
 				${category.Category.toLowerCase()}
 			</div>`;
 
@@ -560,13 +573,69 @@ function analysisInteraction() {
 				</div>
 			`;
 		}
+
+		// update results svg based on data
+		const categoryName = category.Category.replace(/\s/g, '-');
+		const categorySelector = document.querySelector(`.infographic-results-wrapper #${categoryName}`);
+		if(categorySelector) {
+			const categorySVG = categorySelector.parentElement;
+			categorySVG.classList.add('is-enabled');
+
+			// set value
+			const levelMeter = categorySelector.querySelector('#level-meter');
+			let levelNumbers = categorySelector.querySelectorAll(['#number-1', '#number-2', '#number-3', '#number-4', '#number-5']);
+			let levelLines = categorySelector.querySelectorAll(['#line-1', '#line-2', '#line-3', '#line-4']);
+			const desiredLevel5 = categorySelector.querySelector('#desired-level-5');
+
+			// set elements
+			gsap.set(levelMeter, {
+				transformOrigin: 'bottom',
+				scaleY: 0
+			});
+			gsap.set(desiredLevel5, {
+				transformOrigin: 'center',
+				scale: 0
+			});
+			gsap.set(levelMeter, {
+				scaleY: category.AverageCurrentLevel * 0.2
+			})
+
+			levelNumbers.forEach(function(number, index) {
+				const value = index + 1;
+				if(category.AverageCurrentLevel >= value) {
+					gsap.set(number, { fill: 'white' })
+				}
+			})
+
+			if(category.AverageDesiredLevel == 5) {
+				gsap.set(desiredLevel5, {
+					scale: 1
+				})
+				gsap.set(levelLines, {
+					fill: '#EEEEEE'
+				})
+			} else {
+				gsap.set(desiredLevel5, {
+					scale: 0
+				})
+				levelLines.forEach(function(line, index) {
+					const value = index + 1;
+					if(category.AverageDesiredLevel == value) {
+						gsap.to(line, { fill: colors.teal })
+					}
+				})
+			}
+
+		} {
+			console.log('no element');
+		}
+
 	});
 
 	tabsTriggers.html(tabsTriggersEl);
 	tabsTriggers.prependTo(infographicWrapper);
 	tabsContent.html(tabsContentEl);
 	tabsContent.appendTo(contentWrapper);
-
 	tabsInteraction();
 }
 
@@ -575,6 +644,8 @@ function analysisInteraction() {
 // tabs interaction
 function tabsInteraction() {
 	const tabs = $('.tabs');
+	const infographic = document.querySelector('.analysis-step .infographic-wrapper svg');
+
 	if(tabs) {
 		tabs.each(function() {
 			const tab = $(this);
@@ -588,7 +659,10 @@ function tabsInteraction() {
 						const lastItem = tab.find('.tab-trigger.is-active');
 						const lastIndex = triggers.index(lastItem);
 						$(this).addClass('is-active');
+
+						animateSVG($(this).attr('data-category'), lastItem.attr('data-category'));
 						animateTrigger(index);
+
 						if(index > lastIndex) {
 							animateStep(contents, 'next', index, lastIndex);
 						} else {
@@ -605,6 +679,10 @@ function tabsInteraction() {
 				const index = parseInt($(this).attr('data-index'));
 				$(this).on('click', function() {
 					const nextIndex = index - 1;
+					const nextTab = triggers[nextIndex];
+					const lastTab = triggers[nextIndex + 1];
+
+					animateSVG(nextTab.getAttribute('data-category'), lastTab.getAttribute('data-category'));
 					animateTrigger(nextIndex);
 					animateStep(contents, 'prev', nextIndex, nextIndex + 1);
 				})
@@ -614,6 +692,10 @@ function tabsInteraction() {
 				const index = parseInt($(this).attr('data-index'));
 				$(this).on('click', function() {
 					const nextIndex = index + 1;
+					const nextTab = triggers[nextIndex];
+					const lastTab = triggers[nextIndex - 1];
+
+					animateSVG(nextTab.getAttribute('data-category'), lastTab.getAttribute('data-category'));
 					animateTrigger(nextIndex);
 					animateStep(contents, 'next', nextIndex, nextIndex - 1);
 				})
@@ -622,6 +704,26 @@ function tabsInteraction() {
 			function animateTrigger(index) {
 				tab.find('.tab-trigger.is-active').removeClass('is-active');
 				triggers[index].classList.add('is-active');
+			}
+
+			// animate svg
+			let initialCategory = selectedCategoriesObject[0].Category;
+			initialCategory = initialCategory.replace(/\s/g, '-');
+			const initialSVGCategory = infographic.querySelector(`#${initialCategory}`);
+			if(initialSVGCategory) {
+				initialSVGCategory.parentElement.classList.add('is-active');
+			}
+
+			function animateSVG(nextCategory, lastCategory) {
+				const next = nextCategory.replace(/\s/g, '-');
+				const last = lastCategory.replace(/\s/g, '-');
+				console.log(nextCategory, lastCategory);
+
+				const nextSVG = infographic.querySelector(`#${next}`)
+				const lastSVG = infographic.querySelector(`#${last}`)
+				console.log(nextSVG, lastSVG);
+				nextSVG.parentElement.classList.add('is-active');
+				lastSVG.parentElement.classList.remove('is-active');
 			}
 
 		})

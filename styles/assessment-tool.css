@@ -271,6 +271,16 @@
   #assessment-tool .infographic-base-wrapper:not(.is-disabled) #dot {
     opacity: 0;
     transition: .3s all ease; }
+  #assessment-tool .infographic-results-wrapper #category {
+    transition: .3s all ease;
+    opacity: .5; }
+    #assessment-tool .infographic-results-wrapper #category:not(.is-enabled) g:nth-child(2),
+    #assessment-tool .infographic-results-wrapper #category:not(.is-enabled) #dot {
+      display: none; }
+    #assessment-tool .infographic-results-wrapper #category.is-enabled #gray {
+      display: none; }
+    #assessment-tool .infographic-results-wrapper #category.is-active {
+      opacity: 1; }
   #assessment-tool .tabs-content .tab-content:not(:first-child) {
     display: none; }
   #assessment-tool .tabs-triggers {
@@ -305,9 +315,9 @@
   #assessment-tool .analysis-step .eyebrow {
     margin-top: 40px; }
   #assessment-tool .analysis-step .analysis-tabs {
-    margin-bottom: 40px; }
+    margin-bottom: 20px; }
   #assessment-tool .analysis-step .content-wrapper {
-    padding-right: 12%; }
+    padding-right: 7%; }
   #assessment-tool .analysis-step .title {
     text-transform: uppercase; }
     #assessment-tool .analysis-step .title .level {

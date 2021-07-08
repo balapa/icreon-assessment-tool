@@ -407,6 +407,28 @@ $purple: #6f42c1;
 			}
 		}
 	}
+
+	// results
+	.infographic-results-wrapper {
+		#category {
+			transition: .3s all ease;
+			opacity: .5;
+			&:not(.is-enabled) {
+				g:nth-child(2),
+				#dot {
+					display: none;
+				}
+			}
+			&.is-enabled {
+				#gray {
+					display: none;
+				}
+			}
+			&.is-active {
+				opacity: 1;
+			}
+		}
+	}
 	
 	// tabs
 	.tabs-content {
@@ -456,15 +478,12 @@ $purple: #6f42c1;
 		.eyebrow {
 			margin-top: 40px;
 		}
-
 		.analysis-tabs {
-			margin-bottom: 40px;
+			margin-bottom: 20px;
 		}
-
 		.content-wrapper {
-			padding-right: 12%;
+			padding-right: 7%;
 		}
-
 		.title {
 			text-transform: uppercase;
 			.level {
