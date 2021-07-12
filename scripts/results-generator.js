@@ -1,63 +1,28 @@
-// global variables
-const jsonURL = 'https://api.jsonbin.io/b/60e6d34a9328b059d7b9e1ff';
-const wrapper = $('.assessment-tool-results');
-const colors = { teal: '#20c997' }
-
-$(document).ready(function () {
-
-	$.ajax({
-		url: jsonURL,
-		type: "GET",
-		dataType: "json",
-		beforeSend: function (xhr) {
-			xhr.setRequestHeader(
-				"secret-key",
-				"$2b$10$AebJkuUBlBjl4b7KufLvCeFY8nC9hVBfYNPeXVpn.e2CVxghNnMky"
-			);
-		},
-		success: function (json) {
-			if(json) {
-				generateResults(json);
-			}
-		},
-		error: function () {
-			alert("There's an error. Please reload the page.");
-		},
-	});
-
-});
-
-
 // generate results
-function generateResults(json) {
-	const content = wrapper.find('.content');
-	const loading = wrapper.find('.loading');
-
-	loading.hide();
-	generateLegends(json.Levels);
-	generateCategories(json.Category);
-	generateSVG(json.Category);
-	content.show();
-
-	// window.print();
+function generateResults(wrapper, json) {
+	generateLegends(wrapper, json.Levels);
+	generateCategories(wrapper, json.Category);
+	generateSVG(wrapper, json.Category);
 }
 
 
 // generate legends
-function generateLegends(levels) {
+function generateLegends(wrapper, levels) {
 	const legendsWrapper = wrapper.find('.legends');
-	const list = $('<div class="legend-list"></div>');
-	let els = '';
-	levels.forEach((level) => {
-		els += `<div class="legend-item">${level.Title}</div>`;
-	})
-	list.html(els);
-	list.appendTo(legendsWrapper);
+	if(legendsWrapper) {
+		const list = $('<div class="legend-list"></div>');
+		let els = '';
+		levels.forEach((level) => {
+			els += `<div class="legend-item">${level.Title}</div>`;
+		})
+		list.html(els);
+		list.appendTo(legendsWrapper);
+	}
 }
 
 
 // generate categories
-function generateCategories(categories) {
+function generateCategories(wrapper, categories) {
 	const selectedCategoriesWrapper = wrapper.find('.selected-categories');
 	const unselectedCategoriesWrapper = wrapper.find('.unselected-categories');
 	const selectedCategoriesEl = $('<div class="categories"></div>');
@@ -113,7 +78,7 @@ function generateCategories(categories) {
 
 
 // generate svg
-function generateSVG(categories) {
+function generateSVG(wrapper, categories) {
 	const infographicWrapper = wrapper.find('.infographic-results-wrapper');
 	infographicWrapper.html(infographicResults());
 
@@ -140,7 +105,7 @@ function generateSVG(categories) {
 					scaleY: 0
 				});
 				gsap.set(desiredLevel5, {
-					eransformOrigin: 'center',
+					transformOrigin: 'center',
 					scale: 0
 				});
 				gsap.set(levelMeter, {

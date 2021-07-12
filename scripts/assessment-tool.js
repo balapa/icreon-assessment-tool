@@ -1,5 +1,6 @@
 // global variables
 const assessmentTool = $('#assessment-tool');
+const assessmentToolResults = $('.assessment-tool-results');
 const colors = { teal: '#20c997' }
 const transition = { x: 50 }
 const selectedCategories = [];
@@ -24,7 +25,6 @@ function retakeAssessment() {
 	const button = $('.retake-assessment');
 	if(button) {
 		button.on('click', function() {
-			console.log('yo');
 			window.location.reload();
 		})
 	}
@@ -43,6 +43,7 @@ function selectCategories() {
 			let triggerState = false;
 			let category = categoryEl.id;
 			category = category.replace(/-/g, ' ');
+			category = category.replace('&','');
 
 			$(this).on('click', function() {
 
@@ -736,7 +737,12 @@ function tabsInteraction() {
 function animateStep(array, type, nextIndex, lastIndex) {
 	const tl = gsap.timeline({
 		onStart: () => {
-			$(window).scrollTop(0);
+			$('html, body').animate({
+				scrollTop: assessmentTool.offset().top
+			}, {
+				duration: 600,
+				easing: 'swing'
+			});
 		}
 	});
 
@@ -786,8 +792,18 @@ function formValidation() {
 				results.Email = form.find('#email').val();
 				results.FirstName = form.find('#first-name').val();
 				results.LastName = form.find('#last-name').val();
-				console.log(results);
-				console.log('call ajax after this');
+
+				// show direct results
+				const lastInfographic = $('.analysis-step .infographic-results-wrapper');
+				assessmentTool.addClass('loading');
+				lastInfographic.remove();
+
+				// generate results
+				generateResults(assessmentToolResults, results);
+				setTimeout(() => {
+					assessmentTool.removeClass('loading');
+					animateStep(assessmentTool.children(), 'next', 1, 0);
+				}, 300);
 			}
 		})
 	}
