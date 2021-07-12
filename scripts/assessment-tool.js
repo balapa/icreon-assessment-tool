@@ -505,25 +505,34 @@ function analysisInteraction() {
 			// make tabs content
 			let graph = '';
 			let buttons = '';
+			let desiredLevelLabel = 'aiming for here';
+			let graphClass = '';
 
-			if(category.AverageCurrentLevel < category.AverageDesiredLevel) {
-				graph = `<div class="analysis-graph">
-						<div class="current-level">
-						<div class="label-wrapper">
-							<div class="label">you are here</div>
-						</div>
-						<div class="dot"></div>
-						<div class="number">${category.AverageCurrentLevel}</div>
-					</div>
-					<div class="desired-level">
-						<div class="number">${category.AverageDesiredLevel}</div>
-						<div class="dot"></div>
-						<div class="label-wrapper">
-							<div class="label">aiming for here</div>
-						</div>
-					</div>
-				</div>`;
+			if(category.AverageCurrentLevel == category.AverageDesiredLevel) {
+				graphClass = 'same-level';
+				desiredLevelLabel = 'you are at desired level';
 			}
+
+			graph = `<div class="analysis-graph ${graphClass}">
+					<div class="level current-level level-${category.AverageCurrentLevel}">
+					<div class="label-wrapper">
+						<div class="label">you are here</div>
+					</div>
+					<div class="dot"></div>
+					<div class="number">${category.AverageCurrentLevel}</div>
+				</div>
+				<div class="edge-dots">
+					<div class="dot"></div>
+					<div class="dot"></div>
+				</div>
+				<div class="level desired-level level-${category.AverageDesiredLevel}">
+					<div class="number">${category.AverageDesiredLevel}</div>
+					<div class="dot"></div>
+					<div class="label-wrapper">
+						<div class="label">${desiredLevelLabel}</div>
+					</div>
+				</div>
+			</div>`;
 
 			// make buttons
 			if(selectedCategoriesObject.length > 1) {

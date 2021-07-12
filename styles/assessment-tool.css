@@ -129,7 +129,7 @@
     align-items: center; }
   @media only screen and (max-width: 767.98px) {
     #assessment-tool .initial-step .content-wrapper {
-      padding-right: 0;
+      padding-right: 15px;
       margin-bottom: 50px; } }
   #assessment-tool .steps-indicator {
     margin-bottom: 10px; }
@@ -432,15 +432,6 @@
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 40px; }
-  .analysis-graph:before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    transform: translateY(-50%);
-    height: 2px;
-    background: #ddd; }
   .analysis-graph:after {
     content: '';
     position: absolute;
@@ -451,22 +442,59 @@
     height: 12px;
     border: 2px solid #ccc;
     background: #eee;
-    border-radius: 50%; }
-  .analysis-graph > div {
-    width: 50%;
-    position: relative; }
-    .analysis-graph > div:after {
+    border-radius: 50%;
+    z-index: 1; }
+  .analysis-graph .edge-dots {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    margin-top: -1px;
+    z-index: 1;
+    height: 2px;
+    background: #ddd; }
+    .analysis-graph .edge-dots:before {
       content: '';
       position: absolute;
       top: 50%;
-      left: 0;
       transform: translateY(-50%);
-      width: 12px;
-      height: 12px;
-      border: 2px solid #ccc;
-      background: #eee;
-      border-radius: 50%; }
-    .analysis-graph > div .dot {
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #6f42c1; }
+    .analysis-graph .edge-dots .dot {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px; }
+      .analysis-graph .edge-dots .dot:before, .analysis-graph .edge-dots .dot:after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 12px;
+        height: 12px;
+        border: 2px solid #ccc;
+        background: #eee;
+        border-radius: 50%;
+        left: 0;
+        z-index: 1; }
+      .analysis-graph .edge-dots .dot:first-child:after {
+        left: 25%; }
+      .analysis-graph .edge-dots .dot:last-child:before {
+        left: unset;
+        right: 0; }
+      .analysis-graph .edge-dots .dot:last-child:after {
+        left: unset;
+        right: 25%; }
+  .analysis-graph .level {
+    width: 50%;
+    position: relative;
+    text-align: center;
+    z-index: 2; }
+    .analysis-graph .level .dot {
       background: #6f42c1;
       width: 15px;
       height: 15px;
@@ -474,54 +502,74 @@
       display: block;
       border-radius: 50%;
       position: absolute;
+      z-index: 1;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%); }
-    .analysis-graph > div .level {
+    .analysis-graph .level .level {
       position: absolute; }
-    .analysis-graph > div .label-wrapper {
+    .analysis-graph .level .label-wrapper {
       text-transform: uppercase;
       letter-spacing: 2px;
-      text-align: center;
       justify-content: center;
       font-size: 12px;
       height: 70px;
       display: flex;
       flex-wrap: wrap; }
-      .analysis-graph > div .label-wrapper > div {
+      .analysis-graph .level .label-wrapper > div {
         width: 100%; }
-    .analysis-graph > div .number {
-      text-align: center;
+    .analysis-graph .level .number {
       font-size: 22px;
       color: #6f42c1;
       line-height: 70px; }
-  .analysis-graph .current-level:before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    height: 2px;
-    margin-top: -1px;
-    left: 0;
-    width: 50%;
-    background: #6f42c1; }
-  .analysis-graph .current-level:after {
-    border-color: #6f42c1; }
+    .analysis-graph .level.level-1 {
+      text-align: left; }
+      .analysis-graph .level.level-1 .label-wrapper {
+        justify-content: flex-start; }
+      .analysis-graph .level.level-1 .dot {
+        left: 6px; }
+      .analysis-graph .level.level-1 .number {
+        padding-left: 1px; }
+    .analysis-graph .level.level-5 {
+      text-align: right; }
+      .analysis-graph .level.level-5 .label-wrapper {
+        justify-content: flex-end; }
+      .analysis-graph .level.level-5 .dot {
+        left: calc(100% - 6px); }
+      .analysis-graph .level.level-5 .number {
+        padding-right: 1px; }
   .analysis-graph .current-level .label-wrapper {
     align-items: flex-end; }
     .analysis-graph .current-level .label-wrapper:after {
       content: '';
-      width: 8px;
+      width: 12px;
       height: 18px;
       margin-bottom: 20px;
       display: block;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 21'%3E%3Cg id='Page-1' fill='none' fill-rule='evenodd' stroke='none' stroke-width='1'%3E%3Cpath id='arrow' fill='%23111' fill-rule='nonzero' d='M5.495 5.85l9 4.5-9 4.5v-4h-10.34v-1h10.34z' transform='rotate(-90 4.825 10.35)'/%3E%3C/g%3E%3C/svg%3E");
-      background-size: cover;
-      transform: scaleY(-1); }
+      background-size: contain;
+      transform: scaleY(-1);
+      background-position: center;
+      background-repeat: no-repeat; }
+  .analysis-graph .current-level.level-2 {
+    left: 6px; }
+    .analysis-graph .current-level.level-2 + .edge-dots:before {
+      width: 25%; }
+  .analysis-graph .current-level.level-3 {
+    transform: translateX(50%); }
+    .analysis-graph .current-level.level-3 + .edge-dots:before {
+      width: 50%; }
+  .analysis-graph .current-level.level-4 {
+    transform: translateX(100%);
+    right: 6px; }
+    .analysis-graph .current-level.level-4 + .edge-dots:before {
+      width: 75%; }
+  .analysis-graph .current-level.level-5 {
+    transform: translateX(100%); }
+    .analysis-graph .current-level.level-5 + .edge-dots:before {
+      width: 100%; }
   .analysis-graph .desired-level {
     margin-left: auto; }
-    .analysis-graph .desired-level:after {
-      left: unset;
-      right: 0; }
     .analysis-graph .desired-level .dot {
       background: #c0f5e5;
       border-color: #20c997; }
@@ -550,12 +598,36 @@
       align-items: flex-end; }
       .analysis-graph .desired-level .label-wrapper:before {
         content: '';
-        width: 8px;
+        width: 12px;
         height: 18px;
         display: block;
         margin-top: 20px;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 21'%3E%3Cg id='Page-1' fill='none' fill-rule='evenodd' stroke='none' stroke-width='1'%3E%3Cpath id='arrow' fill='%23111' fill-rule='nonzero' d='M5.495 5.85l9 4.5-9 4.5v-4h-10.34v-1h10.34z' transform='rotate(-90 4.825 10.35)'/%3E%3C/g%3E%3C/svg%3E");
-        background-size: cover; }
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat; }
+    .analysis-graph .desired-level.level-1 {
+      transform: translateX(-100%); }
+    .analysis-graph .desired-level.level-2 {
+      transform: translateX(-100%);
+      left: 6px; }
+    .analysis-graph .desired-level.level-3 {
+      transform: translateX(-50%); }
+    .analysis-graph .desired-level.level-4 {
+      right: 6px; }
+  .analysis-graph.same-level .current-level {
+    visibility: hidden; }
+  .analysis-graph.same-level .edge-dots:before {
+    display: none; }
+  .analysis-graph.same-level .desired-level .dot {
+    background: #6f42c1;
+    border-color: #cd36c1; }
+    .analysis-graph.same-level .desired-level .dot:before {
+      border-color: #dc73d4; }
+    .analysis-graph.same-level .desired-level .dot:after {
+      border-color: #ebb1e7; }
+  .analysis-graph.same-level .desired-level .number {
+    color: #cd36c1; }
 
 @keyframes ripple {
   0% {
@@ -593,11 +665,10 @@
         background-size: cover; }
   #assessment-tool .assessment-tool-results .content {
     display: none;
-    margin-bottom: auto;
-    min-height: calc(100vh - 244px); }
+    margin-bottom: auto; }
     #assessment-tool .assessment-tool-results .content:not(:first-child) {
       margin-top: 30px;
-      margin-bottom: 50px; }
+      border-bottom: 50px solid white; }
   #assessment-tool .assessment-tool-results .big-title {
     padding: 40px 0 30px;
     border-bottom: 1px solid #ddd;
@@ -606,7 +677,17 @@
     font-size: 44px;
     line-height: 1.02;
     text-transform: uppercase;
-    color: black; }
+    color: black;
+    position: relative; }
+    #assessment-tool .assessment-tool-results .big-title:before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 45px;
+      left: -95px;
+      width: 56px;
+      height: 15px;
+      background-image: linear-gradient(to right, #134285 0%, #65318f 100%); }
   #assessment-tool .assessment-tool-results .legends {
     max-width: 603px;
     margin: 0 auto;
@@ -670,7 +751,7 @@
       padding: 20px; }
     #assessment-tool .assessment-tool-results .selected-categories .category {
       box-shadow: 0 2px 30px 0 rgba(97, 92, 92, 0.15);
-      padding: 25px 25px 30px;
+      padding: 20px 25px 30px;
       background: white;
       border: 1px solid #eee; }
   #assessment-tool .assessment-tool-results .level {
@@ -784,7 +865,7 @@
       font-size: 34px;
       line-height: 1.15;
       color: black;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       font-family: 'Gilroy-Black'; }
     #assessment-tool .assessment-tool-results .cta-wrapper .cta-button {
       background: #90e4bb;

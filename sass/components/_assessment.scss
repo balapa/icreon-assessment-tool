@@ -3,6 +3,7 @@ $green2: #90e4bb;
 $purple: #6f42c1;
 $buttonWidth: 75px;
 $gray: #b2b8be;
+$pink: #cd36c1;
 
 #dummy-assessment-hero {
 	height: 150px;
@@ -182,7 +183,7 @@ $gray: #b2b8be;
 
 		@include below($md) {
 			.content-wrapper {
-				padding-right: 0;
+				padding-right: 15px;
 				margin-bottom: 50px;
 			}
 		}
@@ -656,16 +657,6 @@ $gray: #b2b8be;
 	flex-wrap: wrap;
 	margin-bottom: 40px;
 
-	&:before {
-		content: '';
-		position: absolute;
-		top: 50%;
-		left: 0;
-		right: 0;
-		transform: translateY(-50%);
-		height: 2px;
-		background: #ddd;
-	}
 	&:after {
 		content: '';
 		position: absolute;
@@ -677,23 +668,75 @@ $gray: #b2b8be;
 		border: 2px solid #ccc;
 		background: #eee;
 		border-radius: 50%;
+		z-index: 1;
 	}
 
-	> div {
-		width: 50%;
-		position: relative;
-		&:after {
+	.edge-dots {
+		position: absolute;
+		top: 50%;
+		left: 0;
+		right: 0;
+		height: 1px;
+		margin-top: -1px;
+		z-index: 1;
+		height: 2px;
+		background: #ddd;
+
+		&:before {
 			content: '';
 			position: absolute;
 			top: 50%;
-			left: 0;
 			transform: translateY(-50%);
-			width: 12px;
-			height: 12px;
-			border: 2px solid #ccc;
-			background: #eee;
-			border-radius: 50%;
+			left: 0;
+			width: 0;
+			height: 2px;
+			background-color: $purple;
 		}
+
+		.dot {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 2px;
+			&:before, &:after {
+				content: '';
+				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+				width: 12px;
+				height: 12px;
+				border: 2px solid #ccc;
+				background: #eee;
+				border-radius: 50%;
+				left: 0;
+				z-index: 1;
+			}
+
+			&:first-child {
+				&:after {
+					left: 25%;
+				}
+			}
+
+			&:last-child {
+				&:before {
+					left: unset;
+					right: 0;
+				}
+				&:after {
+					left: unset;
+					right: 25%;
+				}
+			}
+		}
+	}
+
+	.level {
+		width: 50%;
+		position: relative;
+		text-align: center;
+		z-index: 2;
 		.dot {
 			background: $purple;
 			width: 15px;
@@ -702,6 +745,7 @@ $gray: #b2b8be;
 			display: block;
 			border-radius: 50%;
 			position: absolute;
+			z-index: 1;
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
@@ -712,7 +756,6 @@ $gray: #b2b8be;
 		.label-wrapper {
 			text-transform: uppercase;
 			letter-spacing: 2px;
-			text-align: center;
 			justify-content: center;
 			font-size: 12px;
 			height: 70px;
@@ -723,51 +766,84 @@ $gray: #b2b8be;
 			}
 		}
 		.number {
-			text-align: center;
 			font-size: 22px;
 			color: $purple;
 			line-height: 70px;
 		}
-	}
 
-	.current-level {
-		&:before {
-			content: '';
-			position: absolute;
-			top: 50%;
-			height: 2px;
-			margin-top: -1px;
-			left: 0;
-			width: 50%;
-			background: $purple;
+		// levels
+		&.level-1 {
+			text-align: left;
+			.label-wrapper {
+				justify-content: flex-start;
+			}
+			.dot {
+				left: 6px;
+			}
+			.number {
+				padding-left: 1px;
+			}
+		}
+
+		&.level-5 {
+			text-align: right;
+			.label-wrapper {
+				justify-content: flex-end;
+			}
+			.dot {
+				left: calc(100% - 6px);
+			}
+			.number {
+				padding-right: 1px;
+			}
 		}
 	}
 
 	.current-level {
-		&:after {
-			border-color: $purple;
-		}
 		.label-wrapper {
 			align-items: flex-end;
 			&:after {
 				content: '';
-				width: 8px;
+				width: 12px;
 				height: 18px;
 				margin-bottom: 20px;
 				display: block;
 				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 21'%3E%3Cg id='Page-1' fill='none' fill-rule='evenodd' stroke='none' stroke-width='1'%3E%3Cpath id='arrow' fill='%23111' fill-rule='nonzero' d='M5.495 5.85l9 4.5-9 4.5v-4h-10.34v-1h10.34z' transform='rotate(-90 4.825 10.35)'/%3E%3C/g%3E%3C/svg%3E");
-				background-size: cover;
+				background-size: contain;
 				transform: scaleY(-1);
+				background-position: center;
+				background-repeat: no-repeat;
+			}
+		}
+		&.level-2 {
+			left: 6px;
+			+ .edge-dots:before {
+				width: 25%;
+			}
+		}
+		&.level-3 {
+			transform: translateX(50%);
+			+ .edge-dots:before {
+				width: 50%;
+			}
+		}
+		&.level-4 {
+			transform: translateX(100%);
+			right: 6px;
+			+ .edge-dots:before {
+				width: 75%;
+			}
+		}
+		&.level-5 {
+			transform: translateX(100%);
+			+ .edge-dots:before {
+				width: 100%;
 			}
 		}
 	}
 
 	.desired-level {
 		margin-left: auto;
-		&:after {
-			left: unset;
-			right: 0;
-		}
 		.dot {
 			background: lighten($green, 40%);
 			border-color: $green;
@@ -795,15 +871,56 @@ $gray: #b2b8be;
 			align-items: flex-end;
 			&:before {
 				content: '';
-				width: 8px;
+				width: 12px;
 				height: 18px;
 				display: block;
 				margin-top: 20px;
 				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 21'%3E%3Cg id='Page-1' fill='none' fill-rule='evenodd' stroke='none' stroke-width='1'%3E%3Cpath id='arrow' fill='%23111' fill-rule='nonzero' d='M5.495 5.85l9 4.5-9 4.5v-4h-10.34v-1h10.34z' transform='rotate(-90 4.825 10.35)'/%3E%3C/g%3E%3C/svg%3E");
-				background-size: cover;
+				background-size: contain;
+				background-position: center;
+				background-repeat: no-repeat;
+			}
+		}
+
+		&.level-1 {
+			transform: translateX(-100%);
+		}
+		&.level-2 {
+			transform: translateX(-100%);
+			left: 6px;
+		}
+		&.level-3 {
+			transform: translateX(-50%);
+		}
+		&.level-4 {
+			right: 6px;
+		}
+	} // desired level ends
+
+	&.same-level {
+		.current-level {
+			visibility: hidden;
+		}
+		.edge-dots:before {
+			display: none;
+		}
+		.desired-level {
+			.dot {
+				background: $purple;
+				border-color: $pink;
+				&:before {
+					border-color: lighten($pink, 15%);
+				}
+				&:after {
+					border-color: lighten($pink, 30%);
+				}
+			}
+			.number {
+				color: $pink;
 			}
 		}
 	}
+
 } // analysis graph
 
 
@@ -861,10 +978,10 @@ $gray: #b2b8be;
 	.content {
 		display: none;
 		margin-bottom: auto;
-		min-height: calc(100vh - 244px);
+		// min-height: calc(100vh - 244px);
 		&:not(:first-child) {
 			margin-top: 30px;
-			margin-bottom: 50px;
+			border-bottom: 50px solid white;
 		}
 	}
 
@@ -877,6 +994,17 @@ $gray: #b2b8be;
 		line-height: 1.02;
 		text-transform: uppercase;
 		color: black;
+		position: relative;
+		&:before {
+			content: '';
+			display: block;
+			position: absolute;
+			top: 45px;
+			left: -95px;
+			width: 56px;
+			height: 15px;
+			background-image: linear-gradient(to right, #134285 0%, #65318f 100%);
+		}
 	}
 
 	.legends {
@@ -958,7 +1086,7 @@ $gray: #b2b8be;
 
 		.category {
 			box-shadow: 0 2px 30px 0 rgba(97, 92, 92, 0.15);
-			padding: 25px 25px 30px;
+			padding: 20px 25px 30px;
 			background: white;
 			border: 1px solid #eee;
 		}
@@ -1121,7 +1249,7 @@ $gray: #b2b8be;
 			font-size: 34px;
 			line-height: 1.15;
 			color: black;
-			margin-bottom: 40px;
+			margin-bottom: 30px;
 			font-family: 'Gilroy-Black';
 		}
 
