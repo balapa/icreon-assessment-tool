@@ -130,10 +130,16 @@
     padding: 70px 0;
     min-height: 100vh;
     align-items: center; }
+  #assessment-tool .initial-step .infographic-wrapper .evaluation-trigger {
+    margin-top: 40px; }
   @media only screen and (max-width: 767.98px) {
     #assessment-tool .initial-step .content-wrapper {
       padding-right: 15px;
-      margin-bottom: 50px; } }
+      margin-bottom: 50px; }
+    #assessment-tool .initial-step > .row:first-child {
+      padding: 60px 0; }
+    #assessment-tool .initial-step:not(.show-continue-button) .infographic-wrapper .evaluation-trigger {
+      display: none; } }
   #assessment-tool .steps-indicator {
     margin-bottom: 10px; }
   #assessment-tool .eyebrow {
@@ -159,12 +165,12 @@
     font-size: 26px;
     font-weight: 700;
     color: #643690;
-    line-height: 32px;
+    line-height: 1.25;
     margin-bottom: 25px;
     font-family: 'gilroyextrabold'; }
   #assessment-tool .description {
     font-size: 18px;
-    line-height: 30px;
+    line-height: 1.65;
     margin-bottom: 40px; }
   #assessment-tool .questionnaire-step .error-message {
     margin-top: 20px;
@@ -179,8 +185,11 @@
     #assessment-tool .questionnaire-step .content-wrapper {
       padding-right: 50px; } }
   @media only screen and (max-width: 767.98px) {
-    #assessment-tool .questionnaire-step .content-wrapper {
-      margin-bottom: 50px; } }
+    #assessment-tool .questionnaire-step .infographic-wrapper {
+      margin-bottom: 30px;
+      order: -1; }
+      #assessment-tool .questionnaire-step .infographic-wrapper svg {
+        display: none; } }
   #assessment-tool .error-message {
     color: #d84f4f;
     font-size: 14px; }
@@ -189,6 +198,9 @@
     width: 100%; }
   #assessment-tool .competencies-step {
     display: none; }
+    @media only screen and (max-width: 767.98px) {
+      #assessment-tool .competencies-step .description {
+        margin-bottom: 0; } }
   #assessment-tool .evaluation-step,
   #assessment-tool .analysis-step {
     padding: 70px 0; }
@@ -196,24 +208,26 @@
     #assessment-tool .analysis-step .buttons-wrapper .prev {
       margin-right: 30px; }
     @media only screen and (max-width: 767.98px) {
-      #assessment-tool .evaluation-step .buttons-wrapper,
-      #assessment-tool .analysis-step .buttons-wrapper {
-        text-align: center; }
-        #assessment-tool .evaluation-step .buttons-wrapper .prev,
-        #assessment-tool .analysis-step .buttons-wrapper .prev {
-          margin-right: 20px; } }
+      #assessment-tool .evaluation-step,
+      #assessment-tool .analysis-step {
+        padding: 60px 0; }
+        #assessment-tool .evaluation-step .buttons-wrapper,
+        #assessment-tool .analysis-step .buttons-wrapper {
+          text-align: center; }
+          #assessment-tool .evaluation-step .buttons-wrapper .prev,
+          #assessment-tool .analysis-step .buttons-wrapper .prev {
+            margin-right: 20px; } }
   #assessment-tool .level-wrapper {
     display: inline-flex;
     align-items: center;
     width: 100%; }
-    #assessment-tool .level-wrapper:not(:first-child):not(:last-child) {
-      margin-bottom: 15px; }
-    #assessment-tool .level-wrapper .label {
+    #assessment-tool .level-wrapper.level-head .label {
       min-width: 95px;
       text-align: center;
       text-transform: capitalize;
-      margin-bottom: 5px;
       font-family: 'gilroybold'; }
+    #assessment-tool .level-wrapper:not(:last-child) {
+      margin-bottom: 15px; }
     #assessment-tool .level-wrapper .level {
       text-transform: uppercase;
       border: 1px solid #643690;
@@ -239,35 +253,109 @@
           color: white;
           background: #20c997; }
     #assessment-tool .level-wrapper .answer {
-      font-size: 14px; }
+      font-size: 14px;
+      line-height: 1.35; }
     @media only screen and (max-width: 1023.98px) {
       #assessment-tool .level-wrapper {
-        display: flex;
-        flex-wrap: wrap; }
+        display: block;
+        position: relative;
+        padding-left: 28px;
+        counter-increment: level-number; }
+        #assessment-tool .level-wrapper:last-child {
+          padding-left: unset;
+          border-left: 28px solid white;
+          border-radius: 18px; }
+          #assessment-tool .level-wrapper:last-child:after {
+            left: -28px; }
+        #assessment-tool .level-wrapper.level-head {
+          display: none; }
         #assessment-tool .level-wrapper .current, #assessment-tool .level-wrapper .desired {
-          width: 50%;
-          padding: 0 10px;
-          text-align: center; }
-        #assessment-tool .level-wrapper .label {
-          margin-bottom: 15px; }
+          display: none; }
         #assessment-tool .level-wrapper .answer {
-          width: 100%;
-          margin-top: 15px; }
-        #assessment-tool .level-wrapper:not(:first-child):not(:last-child) {
-          margin-bottom: 15px;
-          padding-bottom: 15px;
-          border-bottom: 1px solid #ddd; } }
+          font-size: 16px; }
+        #assessment-tool .level-wrapper:before {
+          content: "Level " counter(level-number) ":";
+          font-family: 'gilroybold';
+          color: #643690;
+          text-transform: uppercase;
+          margin-bottom: 5px;
+          letter-spacing: 2px;
+          font-size: 15px;
+          display: block; }
+        #assessment-tool .level-wrapper:after {
+          content: '';
+          position: absolute;
+          top: 5px;
+          left: 0;
+          width: 8px;
+          height: 8px;
+          display: block;
+          border-radius: 50%;
+          background: #643690; }
+        #assessment-tool .level-wrapper:not(:last-child) {
+          margin-bottom: 0;
+          padding-bottom: 20px; } }
+  #assessment-tool .levels-wrapper {
+    position: relative; }
+    @media only screen and (max-width: 1023.98px) {
+      #assessment-tool .levels-wrapper {
+        counter-reset: level-number; }
+        #assessment-tool .levels-wrapper:before {
+          content: '';
+          position: absolute;
+          top: 8px;
+          bottom: 8px;
+          left: 3px;
+          width: 2px;
+          background: linear-gradient(to bottom, rgba(19, 66, 133, 0.18), #65318f 100%); } }
+  #assessment-tool .mobile-level-wrapper {
+    margin-bottom: 40px; }
+    #assessment-tool .mobile-level-wrapper > div {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 20px; }
+    #assessment-tool .mobile-level-wrapper .level-head {
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-family: 'gilroysemibold';
+      text-align: center; }
+    #assessment-tool .mobile-level-wrapper select {
+      width: 100%;
+      border: 1px solid purple;
+      border-radius: 30px;
+      padding: 10px 15px;
+      font-family: 'gilroysemibold';
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      appearance: none;
+      font-size: 13px;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      text-align: center;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 7'%3E%3Cpath fill='%23111' fill-rule='evenodd' d='M4.5 7L0 0h9z'/%3E%3C/svg%3E") no-repeat calc(100% - 13px) center/8px white; }
+    #assessment-tool .mobile-level-wrapper .desired select {
+      border-color: #20c997; }
+    @media only screen and (min-width: 1024px) {
+      #assessment-tool .mobile-level-wrapper {
+        display: none; } }
   #assessment-tool .questionnaire-categories {
     display: flex;
     flex-wrap: wrap;
     justify-content: center; }
     #assessment-tool .questionnaire-categories .category {
       width: 33.33%;
-      text-align: center;
       transition: .3s all ease;
       opacity: .5;
-      font-family: 'gilroybold';
-      text-transform: capitalize; }
+      display: flex;
+      flex-wrap: wrap; }
+      #assessment-tool .questionnaire-categories .category .text {
+        width: 100%;
+        font-family: 'gilroysemibold';
+        text-transform: capitalize;
+        text-align: center;
+        margin-top: auto;
+        padding-bottom: 8px;
+        line-height: 1.3; }
       #assessment-tool .questionnaire-categories .category.is-active {
         opacity: 1; }
         #assessment-tool .questionnaire-categories .category.is-active:after {
@@ -283,9 +371,12 @@
         height: 12px;
         transition: .3s all ease;
         display: block;
-        margin: 5px auto 10px;
+        margin: auto auto 0;
         border: 1px solid black;
         border-radius: 50%; }
+    @media only screen and (max-width: 767.98px) {
+      #assessment-tool .questionnaire-categories .category {
+        font-size: 14px; } }
   #assessment-tool .infographic-base-wrapper #details {
     -webkit-transform-style: preserve-3d;
     -webkit-transform: translate3d(0, 0, 0); }
@@ -332,10 +423,14 @@
     text-transform: uppercase;
     color: black;
     margin-bottom: 30px; }
+  #assessment-tool .analysis-step .buttons-wrapper {
+    margin-top: 30px; }
   @media only screen and (max-width: 767.98px) {
     #assessment-tool .analysis-step .content-wrapper {
-      padding-right: 15px;
-      margin-bottom: 50px; } }
+      padding-right: 15px; }
+    #assessment-tool .analysis-step .infographic-wrapper {
+      margin-bottom: 30px;
+      order: -1; } }
   #assessment-tool .form-wrapper {
     margin-top: 70px;
     padding-top: 70px;
@@ -350,6 +445,7 @@
       #assessment-tool .form-wrapper .title-wrapper svg {
         display: block;
         width: 34px;
+        min-width: 34px;
         margin-right: 20px; }
       #assessment-tool .form-wrapper .title-wrapper .title {
         line-height: 47px;
@@ -360,7 +456,8 @@
     #assessment-tool .form-wrapper form {
       display: grid;
       grid-gap: 30px;
-      grid-template-columns: 1fr 1fr; }
+      grid-template-columns: 1fr 1fr;
+      margin: 0; }
     #assessment-tool .form-wrapper .icreon-button {
       margin-top: 20px;
       appearance: none;
@@ -397,16 +494,36 @@
         grid-column-end: 3; } }
     @media only screen and (max-width: 767.98px) {
       #assessment-tool .form-wrapper {
-        grid-template-columns: 1fr; }
+        grid-template-columns: 1fr;
+        margin-top: 60px;
+        padding-top: 50px; }
         #assessment-tool .form-wrapper .title-wrapper {
           padding-right: 0; }
           #assessment-tool .form-wrapper .title-wrapper .title {
             font-size: 30px;
-            line-height: 37px; }
+            line-height: 30px;
+            font-family: 'gilroyextrabold';
+            margin: 0; }
+          #assessment-tool .form-wrapper .title-wrapper svg {
+            width: 27px;
+            min-width: 27px; }
         #assessment-tool .form-wrapper .left-column {
           margin-bottom: 30px; }
         #assessment-tool .form-wrapper form {
           grid-template-columns: 1fr; } }
+  @media only screen and (min-width: 768px) {
+    #assessment-tool .block-mobile {
+      display: none; } }
+  @media only screen and (max-width: 767.98px) {
+    #assessment-tool .block-desktop {
+      display: none; }
+    #assessment-tool .title {
+      font-size: 24px; }
+    #assessment-tool .description {
+      font-size: 16px; }
+    #assessment-tool .eyebrow {
+      margin-bottom: 30px;
+      letter-spacing: 4px; } }
 
 .icreon-tabs .tabs-content .tab-content:not(:first-child) {
   display: none; }
@@ -471,6 +588,15 @@
     top: 1px; }
 .icreon-tabs.level-tabs .desired-level .title-wrapper .level {
   background: #20c997; }
+@media only screen and (max-width: 767.98px) {
+  .icreon-tabs .tabs-triggers .tab-trigger {
+    font-size: 14px;
+    padding: 0 0 10px; }
+    .icreon-tabs .tabs-triggers .tab-trigger:after {
+      height: 3px; }
+  .icreon-tabs.level-tabs .tabs-triggers .tab-trigger {
+    margin: 0 20px 10px 0;
+    font-size: 14px; } }
 
 .analysis-graph {
   position: relative;

@@ -5,6 +5,10 @@ $buttonWidth: 65px;
 $gray: #b2b8be;
 $pink: #cd36c1;
 
+// padding
+$desktopPy: 70px;
+$mobilePy: 60px;
+
 #dummy-assessment-hero {
 	height: 150px;
 	background: black;
@@ -179,15 +183,27 @@ $pink: #cd36c1;
 			padding-right: 12%;
 		}
 		> .row:first-child {
-			padding: 70px 0;
+			padding: $desktopPy 0;
 			min-height: 100vh;
 			align-items: center;
+		}
+
+		.infographic-wrapper .evaluation-trigger {
+			margin-top: 40px;
 		}
 
 		@include below($md) {
 			.content-wrapper {
 				padding-right: 15px;
 				margin-bottom: 50px;
+			}
+			> .row:first-child {
+				padding: $mobilePy 0;
+			}
+			&:not(.show-continue-button) {
+				.infographic-wrapper .evaluation-trigger {
+					display: none;
+				}
 			}
 		}
 	}
@@ -225,14 +241,14 @@ $pink: #cd36c1;
 		font-size: 26px;
 		font-weight: 700;
 		color: $purple;
-		line-height: 32px;
+		line-height: 1.25;
 		margin-bottom: 25px;
 		font-family: 'gilroyextrabold';
 	}
 
 	.description {
 		font-size: 18px;
-		line-height: 30px;
+		line-height: 1.65;
 		margin-bottom: 40px;
 	}
 
@@ -257,9 +273,14 @@ $pink: #cd36c1;
 				padding-right: 50px;
 			}
 		}
+
 		@include below($md) {
-			.content-wrapper {
-				margin-bottom: 50px;
+			.infographic-wrapper {
+				margin-bottom: 30px;
+				order: -1;
+				svg {
+					display: none;
+				}
 			}
 		}
 	}
@@ -279,12 +300,18 @@ $pink: #cd36c1;
 	// competencies step
 	.competencies-step {
 		display: none;
+
+		@include below($md) {
+			.description {
+				margin-bottom: 0;
+			}
+		}
 	}
 
 	// evaluation step
 	.evaluation-step,
 	.analysis-step {
-		padding: 70px 0;
+		padding: $desktopPy 0;
 
 		.buttons-wrapper {
 			.prev {
@@ -293,6 +320,7 @@ $pink: #cd36c1;
 		}
 
 		@include below($md) {
+			padding: $mobilePy 0;
 			.buttons-wrapper {
 				text-align: center;
 				.prev {
@@ -307,16 +335,18 @@ $pink: #cd36c1;
 		display: inline-flex;
 		align-items: center;
 		width: 100%;
-		&:not(:first-child):not(:last-child) {
-			margin-bottom: 15px;
+
+		&.level-head {
+			.label {
+				min-width: 95px;
+				text-align: center;
+				text-transform: capitalize;
+				font-family: 'gilroybold';
+			}
 		}
 
-		.label {
-			min-width: 95px;
-			text-align: center;
-			text-transform: capitalize;
-			margin-bottom: 5px;
-			font-family: 'gilroybold';
+		&:not(:last-child) {
+			margin-bottom: 15px;
 		}
 
 		.level {
@@ -354,28 +384,111 @@ $pink: #cd36c1;
 
 		.answer {
 			font-size: 14px;
+			line-height: 1.35;
 		}
 
 		@include below($lg) {
-			display: flex;
-			flex-wrap: wrap;
-			.current, .desired {
-				width: 50%;
-				padding: 0 10px;
-				text-align: center;
+			display: block;
+			position: relative;
+			padding-left: 28px;
+			counter-increment: level-number;
+			&:last-child {
+				padding-left: unset;
+				border-left: 28px solid white;
+				border-radius: 18px;
+				&:after {
+					left: -28px;
+				}
 			}
-			.label {
-				margin-bottom: 15px;
+			&.level-head {
+				display: none;
+			}
+			.current, .desired {
+				display: none;
 			}
 			.answer {
-				width: 100%;
-				margin-top: 15px;
+				font-size: 16px;
 			}
-			&:not(:first-child):not(:last-child) {
-				margin-bottom: 15px;
-				padding-bottom: 15px;
-				border-bottom: 1px solid #ddd;
+			&:before {
+				content: 'Level ' counter(level-number) ':';
+				font-family: 'gilroybold';
+				color: $purple;
+				text-transform: uppercase;
+				margin-bottom: 5px;
+				letter-spacing: 2px;
+				font-size: 15px;
+				display: block;
 			}
+			&:after {
+				content: '';
+				position: absolute;
+				top: 5px;
+				left: 0;
+				width: 8px;
+				height: 8px;
+				display: block;
+				border-radius: 50%;
+				background: $purple;
+			}
+			&:not(:last-child) {
+				margin-bottom: 0;
+				padding-bottom: 20px;
+			}
+		}
+	}
+
+	.levels-wrapper {
+		position: relative;
+		@include below($lg) {
+			counter-reset: level-number;
+			&:before {
+				content: '';
+				position: absolute;
+				top: 8px;
+				bottom: 8px;
+				left: 3px;
+				width: 2px;
+				background: linear-gradient(to bottom, rgba(19, 66, 133, 0.18), #65318f 100%);
+			}
+		}
+	}
+
+	.mobile-level-wrapper {
+		margin-bottom: 40px;
+		> div {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			grid-gap: 20px;
+		}
+		.level-head {
+			margin-bottom: 10px;
+			font-size: 18px;
+			font-family: 'gilroysemibold';
+			text-align: center;
+		}
+		select {
+			width: 100%;
+			border: 1px solid purple;
+			border-radius: 30px;
+			padding: 10px 15px;
+			font-family: 'gilroysemibold';
+			letter-spacing: 2px;
+			text-transform: uppercase;
+			appearance: none;
+			font-size: 13px;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			text-align: center;
+			background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 7'%3E%3Cpath fill='%23111' fill-rule='evenodd' d='M4.5 7L0 0h9z'/%3E%3C/svg%3E") no-repeat calc(100% - 13px) center / 8px white;
+		}
+		.desired {
+			select {
+				border-color: $green;
+			}
+		}
+
+		@include above($lg) {
+			display: none;
 		}
 	}
 
@@ -386,11 +499,19 @@ $pink: #cd36c1;
 
 		.category {
 			width: 33.33%;
-			text-align: center;
 			transition: .3s all ease;
 			opacity: .5;
-			font-family: 'gilroybold';
-			text-transform: capitalize;
+			display: flex;
+			flex-wrap: wrap;
+			.text {
+				width: 100%;
+				font-family: 'gilroysemibold';
+				text-transform: capitalize;
+				text-align: center;
+				margin-top: auto;
+				padding-bottom: 8px;
+				line-height: 1.3;
+			}
 			&.is-active {
 				opacity: 1;
 				&:after {
@@ -411,12 +532,17 @@ $pink: #cd36c1;
 				height: 12px;
 				transition: .3s all ease;
 				display: block;
-				margin: 5px auto 10px;
+				margin: auto auto 0;
 				border: 1px solid black;
 				border-radius: 50%;
 			}
 		}
 
+		@include below($md) {
+			.category {
+				font-size: 14px;
+			}
+		}
 	}
 
 	// infographic base
@@ -506,11 +632,18 @@ $pink: #cd36c1;
 			color: black;
 			margin-bottom: 30px;
 		}
+		.buttons-wrapper {
+			margin-top: 30px;
+		}
 
 		@include below($md) {
 			.content-wrapper {
 				padding-right: 15px;
-				margin-bottom: 50px;
+			}
+
+			.infographic-wrapper {
+				margin-bottom: 30px;
+				order: -1;
 			}
 		}
 	}
@@ -531,6 +664,7 @@ $pink: #cd36c1;
 			svg {
 				display: block;
 				width: 34px;
+				min-width: 34px;
 				margin-right: 20px;
 			}
 			.title {
@@ -546,6 +680,7 @@ $pink: #cd36c1;
 			display: grid;
 			grid-gap: 30px;
 			grid-template-columns: 1fr 1fr;
+			margin: 0;
 		}
 
 		.icreon-button {
@@ -601,11 +736,19 @@ $pink: #cd36c1;
 
 		@include below($md) {
 			grid-template-columns: 1fr;
+			margin-top: $mobilePy;
+			padding-top: 50px;
 			.title-wrapper {
 				padding-right: 0;
 				.title {
 					font-size: 30px;
-					line-height: 37px;
+					line-height: 30px;
+					font-family: 'gilroyextrabold';
+					margin: 0;
+				}
+				svg {
+					width: 27px;
+					min-width: 27px;
 				}
 			}
 			.left-column {
@@ -616,6 +759,30 @@ $pink: #cd36c1;
 			}
 		}
 
+	}
+
+	// hidden show
+	@include above($md) {
+		.block-mobile {
+			display: none;
+		}
+	}
+
+	// assessment tool responsive
+	@include below($md) {
+		.block-desktop {
+			display: none;
+		}
+		.title {
+			font-size: 24px;
+		}
+		.description {
+			font-size: 16px;
+		}
+		.eyebrow {
+			margin-bottom: 30px;
+			letter-spacing: 4px;
+		}
 	}
 
 } // assessment tool
@@ -709,6 +876,28 @@ $pink: #cd36c1;
 		.desired-level {
 			.title-wrapper .level {
 				background: $green;
+			}
+		}
+	}
+
+	// icreon tabs responsive
+	@include below($md) {
+		.tabs-triggers {
+			.tab-trigger {
+				font-size: 14px;
+				padding: 0 0 10px;
+				&:after {
+					height: 3px;
+				}
+			}
+		}
+
+		&.level-tabs {
+			.tabs-triggers {
+				.tab-trigger {
+					margin: 0 20px 10px 0;
+					font-size: 14px;
+				}
 			}
 		}
 	}

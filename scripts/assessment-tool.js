@@ -84,12 +84,14 @@ function selectCategories() {
 function initialSteps() {
 	const evaluationTrigger = $('.evaluation-trigger');
 	const competenciesTrigger = $('.competencies-trigger');
+	const initialStep = $('.initial-step');
 	const preStepArray = $('.initial-step .content-wrapper > div');
 	const rootSteps = $('.root-step');
 	const infographicBaseWrapper = $('.infographic-base-wrapper');
 
 	competenciesTrigger.on('click', function() {
 		animateStep(preStepArray, 'next', 1, 0);
+		initialStep.addClass('show-continue-button');
 		infographicBaseWrapper.removeClass('is-disabled');
 	});
 
@@ -153,9 +155,13 @@ function generateQuestionnaire(json) {
 				if(selectedCategory.Category == category.Category) {
 					categoryClass = 'is-active';
 				}
+				let categoryName = selectedCategory.Category;
+				// if(categoryName == 'CAPABILITY RESOURCE') categoryName = 'CAPABILITY & RESOURCE';
 				categoriesList += `
 					<div class="category ${categoryClass}">
-						${selectedCategory.Category.toLowerCase()}
+						<div class="text">
+							${categoryName.toLowerCase()}
+						</div>
 					</div>
 				`;
 			});
@@ -196,7 +202,7 @@ function generateQuestionnaire(json) {
 					}
 
 					if(answers) {
-						answersEl = `<div class="levels-wrapper">
+						answersEl = `
 							<div class="level-wrapper level-head">
 								<div class="current">
 									<div class="label">current</div>
@@ -205,6 +211,7 @@ function generateQuestionnaire(json) {
 									<div class="label">desired</div>
 								</div>
 							</div>
+							<div class="levels-wrapper">
 						`;
 
 						answers.forEach((answer, index) => {
@@ -224,7 +231,37 @@ function generateQuestionnaire(json) {
 							`;
 						});
 
-						answersEl += '</div>'
+						answersEl += `
+							</div>
+							<div class="mobile-level-wrapper">
+								<div class="level-head">
+									<div class="current">Current</div>
+									<div class="desired">Desired</div>
+								</div>
+								<div class="level-body">
+									<div class="current">
+										<select class="mobile-current-level" data-question-index="${questionIndex}" data-category="${category.Category}">
+											<option value="0">select level</option>
+											<option value="1">level 1</option>
+											<option value="2">level 2</option>
+											<option value="3">level 3</option>
+											<option value="4">level 4</option>
+											<option value="5">level 5</option>
+										</select>
+									</div>
+									<div class="desired">
+										<select class="mobile-desired-level" data-question-index="${questionIndex}" data-category="${category.Category}">
+											<option value="0">select level</option>
+											<option value="1">level 1</option>
+											<option value="2">level 2</option>
+											<option value="3">level 3</option>
+											<option value="4">level 4</option>
+											<option value="5">level 5</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						`;
 					}
 
 					step.html(`
@@ -304,6 +341,7 @@ function levelsInteraction() {
 				if(wrapper.find('.current-level.is-active')) {
 					wrapper.find('.current-level.is-active').removeClass('is-active');
 				}
+
 				if($(this)[0] == lastCurrentLevel[0]) {
 					lastCurrentLevel = false;
 					currentLevel = 0;
@@ -313,29 +351,10 @@ function levelsInteraction() {
 					currentLevel = parseInt($(this).attr('data-level'));
 				}
 
-				// animate infographic level
-				gsap.to(levelMeter, {
-					scaleY: currentLevel * 0.2
-				})
-
-				// animate level numbers
-				levelNumbers.forEach(function(number, index) {
-					const value = index + 1;
-					if(currentLevel >= value) {
-						gsap.to(number, { fill: 'white' })
-					} else {
-						gsap.to(number, { fill: 'black' })
-					}
-				})
-
-				// assign data to object
-				assignDatatoResults({
-					questionIndex: $(this).attr('data-question-index'),
-					currentLevel: currentLevel,
-					desiredLevel: desiredLevel,
-					category: $(this).attr('data-category'),
-					level: $(this).attr('data-level'),
-				});
+				// change select element
+				const selectLevel = wrapper.next().find('.mobile-current-level');
+				selectLevel.val(currentLevel).change();
+				changeCurrentLevel($(this));
 			})
 		})
 
@@ -355,38 +374,102 @@ function levelsInteraction() {
 					desiredLevel = parseInt($(this).attr('data-level'));
 				}
 
-				if(desiredLevel == 5) {
-					gsap.to(desiredLevel5, {
-						scale: 1
-					})
-					gsap.to(levelLines, {
-						fill: '#EEEEEE'
-					})
-				} else {
-					gsap.to(desiredLevel5, {
-						scale: 0
-					})
-					levelLines.forEach(function(line, index) {
-						const value = index + 1;
-						if(desiredLevel == value) {
-							gsap.to(line, { fill: colors.teal })
-						} else {
-							gsap.to(line, { fill: '#EEEEEE' })
-						}
-					})
-				}
-
-				// assign data to object
-				assignDatatoResults({
-					questionIndex: $(this).attr('data-question-index'),
-					currentLevel: currentLevel,
-					desiredLevel: desiredLevel,
-					category: $(this).attr('data-category'),
-					level: $(this).attr('data-level'),
-				});
-
+				// change select element
+				const selectLevel = wrapper.next().find('.mobile-desired-level');
+				selectLevel.val(desiredLevel).change();
+				changeDesiredLevel($(this));
 			})
 		})
+
+		// mobile level wrapp
+		const mobileLevelWrapper = wrapper.next();
+		const mobileLevels = mobileLevelWrapper.find('select');
+		mobileLevels.each(function() {
+			if($(this).hasClass('mobile-current-level')) {
+				$(this).on('change', function() {
+					currentLevel = parseInt($(this).val());
+					if(wrapper.find('.current-level.is-active')) {
+						wrapper.find('.current-level.is-active').removeClass('is-active');
+					}
+					if(currentLevel > 0) {
+						const currentLevelEl = wrapper.find('.current [data-level="' + currentLevel + '"]');
+						currentLevelEl.addClass('is-active');
+					}
+					changeCurrentLevel($(this));
+				})
+			}
+
+			if($(this).hasClass('mobile-desired-level')) {
+				$(this).on('change', function() {
+					desiredLevel = parseInt($(this).val());
+					if(wrapper.find('.desired-level.is-active')) {
+						wrapper.find('.desired-level.is-active').removeClass('is-active');
+					}
+					if(desiredLevel > 0) {
+						const desiredLevelEl = wrapper.find('.desired [data-level="' + desiredLevel + '"]');
+						desiredLevelEl.addClass('is-active');
+					}
+					changeDesiredLevel($(this));
+				})
+			}
+		})
+
+		function changeCurrentLevel(el) {
+			// animate infographic level
+			gsap.to(levelMeter, {
+				scaleY: currentLevel * 0.2
+			})
+
+			// animate level numbers
+			levelNumbers.forEach(function(number, index) {
+				const value = index + 1;
+				if(currentLevel >= value) {
+					gsap.to(number, { fill: 'white' })
+				} else {
+					gsap.to(number, { fill: 'black' })
+				}
+			})
+
+			// assign data to object
+			assignDatatoResults({
+				questionIndex: el.attr('data-question-index'),
+				currentLevel: currentLevel,
+				desiredLevel: desiredLevel,
+				category: el.attr('data-category')
+			});
+		}
+
+		function changeDesiredLevel(el) {
+			if(desiredLevel == 5) {
+				gsap.to(desiredLevel5, {
+					scale: 1
+				})
+				gsap.to(levelLines, {
+					fill: '#EEEEEE'
+				})
+			} else {
+				gsap.to(desiredLevel5, {
+					scale: 0
+				})
+				levelLines.forEach(function(line, index) {
+					const value = index + 1;
+					if(desiredLevel == value) {
+						gsap.to(line, { fill: colors.teal })
+					} else {
+						gsap.to(line, { fill: '#EEEEEE' })
+					}
+				})
+			}
+
+			// assign data to object
+			assignDatatoResults({
+				questionIndex: el.attr('data-question-index'),
+				currentLevel: currentLevel,
+				desiredLevel: desiredLevel,
+				category: el.attr('data-category')
+			});
+
+		}
 
 	})
 }
@@ -689,9 +772,9 @@ function pureTabsInteraction() {
 						triggers[index].classList.add('is-active');
 
 						if(index > lastIndex) {
-							animateStep(contents, 'next', index, lastIndex);
+							animateStep(contents, 'next', index, lastIndex, false);
 						} else {
-							animateStep(contents, 'prev', index, lastIndex);
+							animateStep(contents, 'prev', index, lastIndex, false);
 						}
 					}
 				})
@@ -790,15 +873,17 @@ function analysisTabsInteraction() {
 
 
 // animate step
-function animateStep(array, type, nextIndex, lastIndex) {
+function animateStep(array, type, nextIndex, lastIndex, animate = true) {
 	const tl = gsap.timeline({
 		onStart: () => {
-			// $('html, body').animate({
-			// 	scrollTop: assessmentTool.offset().top
-			// }, {
-			// 	duration: 600,
-			// 	easing: 'swing'
-			// });
+			if(isMobile.any() && animate) {
+				$('html, body').animate({
+					scrollTop: assessmentTool.offset().top
+				}, {
+					duration: 600,
+					easing: 'swing'
+				});
+			}
 		}
 	});
 
@@ -824,11 +909,17 @@ function animateStep(array, type, nextIndex, lastIndex) {
 			})
 			.set(array[lastIndex], {
 				display: 'none',
+				onComplete: () => {
+					array[lastIndex].classList.remove('is-active');
+				}
 			})
 			.to(array[nextIndex], {
 				opacity: 1,
 				x: 0,
-				ease: 'power2.out'
+				ease: 'power2.out',
+				onComplete: () => {
+					array[nextIndex].classList.add('is-active');
+				}
 			})
 	}
 }
@@ -857,6 +948,14 @@ function formValidation() {
 				// generate results
 				generateResults(assessmentToolResults, results);
 				setTimeout(() => {
+
+					// $('html, body').animate({
+					// 	scrollTop: assessmentTool.offset().top
+					// }, {
+					// 	duration: 600,
+					// 	easing: 'swing'
+					// });
+
 					assessmentTool.removeClass('loading');
 					animateStep(assessmentTool.children(), 'next', 1, 0);
 				}, 300);
@@ -864,3 +963,33 @@ function formValidation() {
 		})
 	}
 }
+
+
+
+// is mobile
+const isMobile = {
+	Android: function () {
+		return navigator.userAgent.match(/Android/i);
+	},
+	BlackBerry: function () {
+		return navigator.userAgent.match(/BlackBerry/i);
+	},
+	iOS: function () {
+		return navigator.userAgent.match(/iPhone|iPod/i);
+	},
+	Opera: function () {
+		return navigator.userAgent.match(/Opera Mini/i);
+	},
+	Windows: function () {
+		return navigator.userAgent.match(/IEMobile/i);
+	},
+	any: function () {
+		return (
+			isMobile.Android() ||
+			isMobile.BlackBerry() ||
+			isMobile.iOS() ||
+			isMobile.Opera() ||
+			isMobile.Windows()
+		);
+	},
+};
